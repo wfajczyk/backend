@@ -54,7 +54,7 @@ class CommentTest extends TestCase
      */
     public function testCommentCreation(): void
     {
-        $comment = new Comment($this->id, $this->uuid, $this->userId, $this->content);
+        $comment = Comment::create($this->id, $this->uuid, $this->userId, $this->content);
         $this->assertSame($this->id, $comment->getId());
         $this->assertSame($this->userId, $comment->getAuthorId());
         $this->assertSame($this->uuid, $comment->getObjectId());
@@ -69,7 +69,7 @@ class CommentTest extends TestCase
     public function testContendEditCreation(): void
     {
         $newContent = 'new Content';
-        $comment = new Comment($this->id, $this->uuid, $this->userId, $this->content);
+        $comment = Comment::create($this->id, $this->uuid, $this->userId, $this->content);
         $comment->changeContent($newContent);
         $this->assertSame($newContent, $comment->getContent());
         $this->assertNotEmpty($comment->getEditedAt());

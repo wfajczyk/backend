@@ -11,53 +11,28 @@ namespace Ergonode\Comment\Domain\Event;
 
 use Ergonode\Comment\Domain\Entity\CommentId;
 use Ergonode\Core\Domain\Entity\AbstractId;
-use Ergonode\EventSourcing\Infrastructure\DomainEventInterface;
-use JMS\Serializer\Annotation as JMS;
+use Prooph\EventSourcing\AggregateChanged;
+use Ramsey\Uuid\Uuid;
 
 /**
  */
-class CommentContentChangedEvent implements DomainEventInterface
+class CommentContentChangedEvent extends AggregateChanged
 {
-    /**
-     * @var CommentId $id
-     *
-     * @JMS\Type("Ergonode\Comment\Domain\Entity\CommentId")
-     */
-    private CommentId $id;
-
-    /**
-     * @var string
-     *
-     * @JMS\Type("string")
-     */
-    private string $from;
-
-    /**
-     * @var string
-     *
-     * @JMS\Type("string")
-     */
-    private string $to;
-
-    /**
-     * @var \DateTime
-     *
-     * @JMS\Type("DateTime")
-     */
-    private \DateTime $editedAt;
-
     /**
      * @param CommentId $id
      * @param string    $from
      * @param string    $to
-     * @param \DateTime $editedAt
      */
-    public function __construct(CommentId $id, string $from, string $to, \DateTime $editedAt)
+    public function __construct(CommentId $id, string $from, string $to)
     {
-        $this->id = $id;
-        $this->from = $from;
-        $this->to = $to;
-        $this->editedAt = $editedAt;
+        parent::__construct(
+          $id->getValue(),
+          [
+              'comment_id' => $id->getValue(),
+              'from' => $from,
+              'to' => $to,
+          ]
+        );
     }
 
     /**
@@ -65,7 +40,7 @@ class CommentContentChangedEvent implements DomainEventInterface
      */
     public function getAggregateId(): AbstractId
     {
-        return $this->id;
+        return CommentId::createFromUuid(Uuid::fromString($this->aggregateId()));
     }
 
     /**
@@ -73,7 +48,7 @@ class CommentContentChangedEvent implements DomainEventInterface
      */
     public function getFrom(): string
     {
-        return $this->from;
+        return $this->payload['from'];
     }
 
     /**
@@ -81,14 +56,14 @@ class CommentContentChangedEvent implements DomainEventInterface
      */
     public function getTo(): string
     {
-        return $this->to;
+        return $this->payload['to'];
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeImmutable
      */
-    public function getEditedAt(): \DateTime
+    public function getEditedAt(): \DateTimeImmutable
     {
-        return $this->editedAt;
+        return $this->createdAt;
     }
 }

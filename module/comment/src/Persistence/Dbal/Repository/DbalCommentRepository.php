@@ -47,11 +47,11 @@ class DbalCommentRepository implements CommentRepositoryInterface
     /**
      * @param CommentId $id
      *
-     * @return AbstractAggregateRoot|null
+     * @return Comment|null
      *
      * @throws \ReflectionException
      */
-    public function load(CommentId $id): ?AbstractAggregateRoot
+    public function load(CommentId $id): ?Comment
     {
         $stream = $this->store->load($id);
         if ($stream->count() > 0) {
@@ -97,9 +97,9 @@ class DbalCommentRepository implements CommentRepositoryInterface
      */
     public function delete(Comment $object): void
     {
-        $object->apply(new CommentDeletedEvent($object->getId()));
-        $this->save($object);
-
-        $this->store->delete($object->getId());
+//        $object->apply(new CommentDeletedEvent($object->getId()));
+//        $this->save($object);
+//
+//        $this->store->delete($object->getId());
     }
 }

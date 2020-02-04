@@ -39,6 +39,7 @@ class CommentCreatedEventProjector
      */
     public function __invoke(CommentCreatedEvent $event): void
     {
+        dump($event);die;
         $this->connection->insert(
             self::TABLE,
             [

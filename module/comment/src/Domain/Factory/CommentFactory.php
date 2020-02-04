@@ -30,7 +30,7 @@ class CommentFactory implements CommentFactoryInterface
      */
     public function create(CommentId $id, UserId $authorId, Uuid $objectId, string $content): Comment
     {
-        return new Comment(
+        return Comment::create(
             $id,
             $objectId,
             $authorId,

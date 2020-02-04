@@ -38,6 +38,20 @@ final class Version20191104140000 extends AbstractErgonodeMigration
             'Ergonode\Comment\Domain\Event\CommentContentChangedEvent' => 'Comment content changed',
             'Ergonode\Comment\Domain\Event\CommentDeletedEvent' => 'Comment deleted',
         ]);
+
+        $this->addSql('
+        CREATE TABLE event_streams (
+            no BIGSERIAL,
+            real_stream_name VARCHAR(150) NOT NULL,
+            stream_name CHAR(41) NOT NULL,
+            metadata JSONB,
+            category VARCHAR(150),
+            PRIMARY KEY (no),
+            UNIQUE (stream_name)
+            );
+            
+            CREATE INDEX on event_streams (category);
+        ');
     }
 
     /**

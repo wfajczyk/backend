@@ -22,7 +22,7 @@ interface CommentRepositoryInterface
      *
      * @return Comment
      */
-    public function load(CommentId $id): ?AbstractAggregateRoot;
+    public function load(CommentId $id): ?Comment;
 
     /**
      * @param Comment $object

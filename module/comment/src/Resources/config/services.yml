@@ -1,8 +1,15 @@
+parameters:
+    comment_stream_name: 'comment_stream'
+
 services:
     _defaults:
         autowire: true
         autoconfigure: true
         public: false
+
+        bind:
+#            $commentEventStore: '@event_store_emiter'
+            $commentStoreName : '%comment_stream_name%'
 
     Ergonode\Comment\Persistence\:
         resource: '../../Persistence/*'
@@ -35,5 +42,7 @@ services:
         resource: '../../Infrastructure/JMS/Serializer/Handler/*'
         tags: ['jms_serializer.subscribing_handler']
 
-    Ergonode\Comment\Domain\Repository\CommentRepositoryInterface: '@Ergonode\Comment\Persistence\Dbal\Repository\DbalCommentRepository'
+
+#    Ergonode\Comment\Domain\Repository\CommentRepositoryInterface: '@Ergonode\Comment\Persistence\Dbal\Repository\DbalCommentRepository'
+    Ergonode\Comment\Domain\Repository\CommentRepositoryInterface: '@Ergonode\Comment\Persistence\Dbal\Repository\EventStore'
     Ergonode\Comment\Domain\Query\CommentQueryInterface: '@Ergonode\Comment\Persistence\Dbal\Query\DbalCommentQuery'

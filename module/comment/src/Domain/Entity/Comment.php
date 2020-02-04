@@ -11,15 +11,16 @@ namespace Ergonode\Comment\Domain\Entity;
 
 use Ergonode\Account\Domain\Entity\UserId;
 use Ergonode\Core\Domain\Entity\AbstractId;
-use Ergonode\EventSourcing\Domain\AbstractAggregateRoot;
 use Ergonode\Comment\Domain\Event\CommentContentChangedEvent;
 use Ergonode\Comment\Domain\Event\CommentCreatedEvent;
 use JMS\Serializer\Annotation as JMS;
+use Prooph\EventSourcing\AggregateChanged;
+use Prooph\EventSourcing\AggregateRoot;
 use Ramsey\Uuid\Uuid;
 
 /**
  */
-class Comment extends AbstractAggregateRoot
+class Comment extends AggregateRoot
 {
     /**
      * @var CommentId $id
@@ -43,18 +44,18 @@ class Comment extends AbstractAggregateRoot
     private Uuid $objectId;
 
     /**
-     * @var \DateTime $createdAt
+     * @var \DateTimeImmutable $createdAt
      *
-     * @JMS\Type("DateTime")
+     * @JMS\Type("DateTimeImmutable")
      */
-    private \DateTime $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     /**
-     * @var null|\DateTime $editedAt
+     * @var null|\DateTimeImmutable $editedAt
      *
-     * @JMS\Type("DateTime")
+     * @JMS\Type("DateTimeImmutable")
      */
-    private ?\DateTime $editedAt = null;
+    private ?\DateTimeImmutable $editedAt = null;
 
     /**
      * @var string $content
@@ -69,11 +70,18 @@ class Comment extends AbstractAggregateRoot
      * @param UserId    $authorId
      * @param string    $content
      *
+     * @return Comment
+     *
      * @throws \Exception
      */
-    public function __construct(CommentId $id, Uuid $objectId, UserId $authorId, string $content)
+    public static function create(CommentId $id, Uuid $objectId, UserId $authorId, string $content): Comment
     {
-        $this->apply(new CommentCreatedEvent($id, $authorId, $objectId, $content, new \DateTime()));
+        $new = new self();
+        $new->recordThat(
+            new CommentCreatedEvent($id, $authorId, $objectId, $content)
+        );
+
+        return $new;
     }
 
     /**
@@ -84,7 +92,7 @@ class Comment extends AbstractAggregateRoot
     public function changeContent(string $contend): void
     {
         if ($contend !== $this->content) {
-            $this->apply(new CommentContentChangedEvent($this->id, $this->content, $contend, new \DateTime()));
+            $this->recordThat(new CommentContentChangedEvent($this->id, $this->content, $contend));
         }
     }
 
@@ -113,17 +121,17 @@ class Comment extends AbstractAggregateRoot
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeImmutable
      */
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
     /**
-     * @return \DateTime|null
+     * @return \DateTimeImmutable|null
      */
-    public function getEditedAt(): ?\DateTime
+    public function getEditedAt(): ?\DateTimeImmutable
     {
         return $this->editedAt;
     }
@@ -156,4 +164,24 @@ class Comment extends AbstractAggregateRoot
         $this->content = $event->getTo();
         $this->editedAt = $event->getEditedAt();
     }
+
+    protected function aggregateId(): string
+    {
+        return $this->id->getValue();
+    }
+
+    /**
+     * @param AggregateChanged $event
+     */
+    protected function apply(AggregateChanged $event): void
+    {
+        if ($event instanceof CommentCreatedEvent) {
+            $this->applyCommentCreatedEvent($event);
+        }
+        if ($event instanceof CommentContentChangedEvent) {
+            $this->applyCommentContentChangedEvent($event);
+        }
+    }
+
+
 }
