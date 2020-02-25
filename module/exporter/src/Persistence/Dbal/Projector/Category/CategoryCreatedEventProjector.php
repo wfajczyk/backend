@@ -60,6 +60,7 @@ class CategoryCreatedEventProjector
             self::TABLE_CATEGORY,
             [
                 'id' => $category->getId(),
+                'code' => $category->getCode(),
                 'data' => $this->serializer->serialize($category, 'json'),
             ]
         );

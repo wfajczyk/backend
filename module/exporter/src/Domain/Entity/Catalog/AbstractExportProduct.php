@@ -47,7 +47,6 @@ abstract class AbstractExportProduct
     protected array $attributes;
 
     /**
-     * AbstractExportProduct constructor.
      * @param Uuid                               $id
      * @param string                             $sku
      * @param array|ExportCategoryCode[]         $categories
@@ -96,6 +95,22 @@ abstract class AbstractExportProduct
     public function getAttributes(): array
     {
         return $this->attributes;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return AbstractExportAttributeValue|null
+     */
+    public function getAttribute(string $key): ?AbstractExportAttributeValue
+    {
+        foreach ($this->attributes as $attribute) {
+            if ($attribute->getKey() === $key) {
+                return $attribute;
+            }
+        }
+
+        return null;
     }
 
     /**

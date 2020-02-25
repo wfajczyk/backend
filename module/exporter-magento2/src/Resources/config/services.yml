@@ -12,3 +12,7 @@ services:
 
   Ergonode\ExporterMagento2\Infrastructure\ExportProfile\Magento2ExportProfileValidatorStrategy:
     autowire: true
+
+  Ergonode\ExporterMagento2\Application\Command\:
+      resource: '../../Application/Command/*'
+      tags: ['console.command']

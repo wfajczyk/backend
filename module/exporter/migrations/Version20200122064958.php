@@ -36,6 +36,7 @@ final class Version20200122064958 extends AbstractErgonodeMigration
         $this->addSql(
             'CREATE TABLE exporter.category(
                     id uuid NOT NULL,
+                    code varchar(255) NULL DEFAULT NULL::character varying,
                     data jsonb NOT NULL,
                     PRIMARY KEY (id)
                  )'
@@ -44,6 +45,7 @@ final class Version20200122064958 extends AbstractErgonodeMigration
         $this->addSql(
             'CREATE TABLE exporter.attribute(
                     id uuid NOT NULL,
+                    code varchar(255) NULL DEFAULT NULL::character varying,
                     data jsonb NOT NULL,
                     PRIMARY KEY (id)
                  )'
