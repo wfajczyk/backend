@@ -7,13 +7,11 @@ default:
                 - module/attribute/features
                 - module/authentication/features
                 - module/category/features
-                - module/category-tree/features
                 - module/channel/features
                 - module/comment/features
                 - module/completeness/features
                 - module/condition/features
                 - module/core/features
-                - module/deptrac.png/features
                 - module/designer/features
                 - module/editor/features
                 - module/event-sourcing/features
@@ -36,25 +34,35 @@ default:
                 - module/translation-deepl/features
                 - module/value/features
                 - module/workflow/features
-                - module/product-collection/features
+
             contexts:
+                - App\Tests\Behat\Context\StoreRestResponseParamContext
+                - App\Tests\Behat\Context\UserContext
+                - App\Tests\Behat\Context\ResolveVarsContext
+                - App\Tests\Behat\Context\ApiAuthContext:
+                    JWTTokenManager: '@lexik_jwt_authentication.jwt_manager'
+                    request: '@Behatch\HttpCall\Request'
+                - App\Tests\Behat\Context\UploadFileContext
+                - behatch:context:rest
+                - behatch:context:json
+                - behatch:context:debug
+                - Behat\MinkExtension\Context\MinkContext
                 - StorageContext:
-                - ApiContext:
-                - FeatureContext:
-                    kernel: '@kernel'
                 - AuthenticationContext:
                     username: 'test@ergonode.com'
                     password: 'abcd1234'
-                - AttributeContext:
+
 
     extensions:
+        FriendsOfBehat\SymfonyExtension: ~
+        Behatch\Extension: ~
+        Behat\MinkExtension:
+            base_url: '%env(APP_URL)%'
+            sessions:
+                default:
+                    symfony2: ~
         App\Tests\Behat\Extension\EnvVarProcessorExtension: ~
         Behat\Symfony2Extension:
             kernel:
                 bootstrap: 'features/bootstrap/bootstrap.php'
                 class: 'App\Kernel'
-        Imbo\BehatApiExtension:
-            apiClient:
-                base_uri: '%env(APP_URL)%'
-                timeout: 5.0
-                verify: false

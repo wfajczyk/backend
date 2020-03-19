@@ -9,13 +9,10 @@ declare(strict_types = 1);
 
 namespace Ergonode\Product\Infrastructure\Handler;
 
-use Ergonode\SharedKernel\Domain\Aggregate\CategoryId;
-use Ergonode\Category\Domain\Repository\CategoryRepositoryInterface;
 use Ergonode\Product\Domain\Command\CreateProductCommand;
 use Ergonode\Product\Domain\Provider\ProductFactoryProvider;
 use Ergonode\Product\Domain\Repository\ProductRepositoryInterface;
-use Ergonode\ProductSimple\Domain\Entity\SimpleProduct;
-use Webmozart\Assert\Assert;
+use Ergonode\Product\Domain\Entity\SimpleProduct;
 
 /**
  */
@@ -24,30 +21,22 @@ class CreateProductCommandHandler
     /**
      * @var ProductRepositoryInterface
      */
-    private $productRepository;
-
-    /**
-     * @var CategoryRepositoryInterface
-     */
-    private $categoryRepository;
+    private ProductRepositoryInterface $productRepository;
 
     /**
      * @var ProductFactoryProvider
      */
-    private $productFactoryProvider;
+    private ProductFactoryProvider $productFactoryProvider;
 
     /**
-     * @param ProductRepositoryInterface  $productRepository
-     * @param CategoryRepositoryInterface $categoryRepository
-     * @param ProductFactoryProvider      $productFactoryProvider
+     * @param ProductRepositoryInterface $productRepository
+     * @param ProductFactoryProvider     $productFactoryProvider
      */
     public function __construct(
         ProductRepositoryInterface $productRepository,
-        CategoryRepositoryInterface $categoryRepository,
         ProductFactoryProvider $productFactoryProvider
     ) {
         $this->productRepository = $productRepository;
-        $this->categoryRepository = $categoryRepository;
         $this->productFactoryProvider = $productFactoryProvider;
     }
 
@@ -56,12 +45,7 @@ class CreateProductCommandHandler
      */
     public function __invoke(CreateProductCommand $command)
     {
-        $categories = [];
-        foreach ($command->getCategories() as $categoryId) {
-            $category = $this->categoryRepository->load($categoryId);
-            Assert::notNull($category);
-            $categories[] = $category->getCode();
-        }
+        $categories = $command->getCategories();
 
         $factory = $this->productFactoryProvider->provide(SimpleProduct::TYPE);
         $product = $factory->create($command->getId(), $command->getSku(), $categories, $command->getAttributes());

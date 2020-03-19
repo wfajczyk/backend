@@ -23,7 +23,7 @@ class ProductRemovedFromCategoryEventProjector
     /**
      * @var Connection
      */
-    private $connection;
+    private Connection $connection;
 
     /**
      * @param Connection $connection
@@ -44,7 +44,7 @@ class ProductRemovedFromCategoryEventProjector
             self::TABLE_PRODUCT_CATEGORY,
             [
                 'product_id' => $event->getAggregateId()->getValue(),
-                'category_id' => CategoryId::fromCode($event->getCategoryCode()->getValue()),
+                'category_id' => $event->getCategoryId()->getValue(),
             ]
         );
     }

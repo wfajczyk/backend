@@ -11,6 +11,7 @@ namespace Ergonode\ImporterMagento1\Infrastructure\Processor\Step;
 use Ergonode\EventSourcing\Infrastructure\Bus\CommandBusInterface;
 use Ergonode\Importer\Domain\Command\Import\ProcessImportCommand;
 use Ergonode\Importer\Domain\Entity\Import;
+use Ergonode\Importer\Domain\ValueObject\Progress;
 use Ergonode\ImporterMagento1\Domain\Entity\Magento1CsvSource;
 use Ergonode\ImporterMagento1\Infrastructure\Model\ProductModel;
 use Ergonode\ImporterMagento1\Infrastructure\Processor\Magento1ProcessorStepInterface;
@@ -24,21 +25,31 @@ use Ergonode\Attribute\Domain\Entity\Attribute\MultiSelectAttribute;
 use Ergonode\Value\Domain\ValueObject\TranslatableStringValue;
 use Ergonode\Core\Domain\ValueObject\TranslatableString;
 use Ergonode\Transformer\Domain\Entity\Transformer;
+use Ergonode\Importer\Domain\Repository\ImportLineRepositoryInterface;
+use Ergonode\Importer\Domain\Entity\ImportLine;
+use Doctrine\DBAL\DBALException;
 
 /**
  */
 class Magento1AttributeProcessor implements Magento1ProcessorStepInterface
 {
     /**
+     * @var ImportLineRepositoryInterface
+     */
+    private ImportLineRepositoryInterface $repository;
+
+    /**
      * @var CommandBusInterface
      */
     private CommandBusInterface $commandBus;
 
     /**
-     * @param CommandBusInterface $commandBus
+     * @param ImportLineRepositoryInterface $repository
+     * @param CommandBusInterface           $commandBus
      */
-    public function __construct(CommandBusInterface $commandBus)
+    public function __construct(ImportLineRepositoryInterface $repository, CommandBusInterface $commandBus)
     {
+        $this->repository = $repository;
         $this->commandBus = $commandBus;
     }
 
@@ -47,9 +58,17 @@ class Magento1AttributeProcessor implements Magento1ProcessorStepInterface
      * @param ProductModel[]    $products
      * @param Transformer       $transformer
      * @param Magento1CsvSource $source
+     * @param Progress          $steps
+     *
+     * @throws DBALException
      */
-    public function process(Import $import, array $products, Transformer $transformer, Magento1CsvSource $source): void
-    {
+    public function process(
+        Import $import,
+        array $products,
+        Transformer $transformer,
+        Magento1CsvSource $source,
+        Progress $steps
+    ): void {
         $result = [];
         $columns = [];
         foreach ($products as $product) {
@@ -84,9 +103,19 @@ class Magento1AttributeProcessor implements Magento1ProcessorStepInterface
         }
 
         $i = 0;
+        $count = count($result);
         foreach ($result as $attribute) {
             $i++;
-            $command = new ProcessImportCommand($import->getId(), $i, $attribute, AttributeImportAction::TYPE);
+            $records = new Progress($i, $count);
+            $command = new ProcessImportCommand(
+                $import->getId(),
+                $steps,
+                $records,
+                $attribute,
+                AttributeImportAction::TYPE
+            );
+            $line = new ImportLine($import->getId(), $steps->getPosition(), $i);
+            $this->repository->save($line);
             $this->commandBus->dispatch($command);
         }
     }

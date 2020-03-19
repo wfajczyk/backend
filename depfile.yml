@@ -27,10 +27,6 @@ layers:
     collectors:
       - type: className
         regex: .*Ergonode\\Category\\.*
-  - name: CategoryTree
-    collectors:
-      - type: className
-        regex: .*Ergonode\\CategoryTree\\.*
   - name: Comment
     collectors:
       - type: className
@@ -43,10 +39,6 @@ layers:
     collectors:
       - type: className
         regex: .*Ergonode\\Product\\.*
-  - name: ProductSimple
-    collectors:
-      - type: className
-        regex: .*Ergonode\\ProductSimple\\.*
   - name: Segment
     collectors:
       - type: className
@@ -143,13 +135,6 @@ ruleset:
     - EventSourcing
     - Api
     - Account
-  CategoryTree:
-    - Core
-    - Grid
-    - EventSourcing
-    - Category
-    - Api
-    - Value
   Completeness:
     - Core
     - Attribute
@@ -170,19 +155,13 @@ ruleset:
     - Api
     - Value
     - Account
-  ProductSimple:
-    - Core
-    - EventSourcing
-    - Product
-    - Category
-    - Attribute
-    - Value
   Segment:
     - Core
     - EventSourcing
     - Grid
     - Api
     - Condition
+    - Product
   Workflow:
     - Core
     - EventSourcing
@@ -242,7 +221,6 @@ ruleset:
     - EventSourcing
     - Api
     - Category
-    - CategoryTree
     - Designer
     - Product
     - Value
@@ -277,6 +255,8 @@ ruleset:
   ProductCollection:
     - Api
     - Core
+    - Grid
     - EventSourcing
     - Segment
     - Product
+    - Attribute

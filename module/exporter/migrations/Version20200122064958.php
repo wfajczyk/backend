@@ -43,9 +43,16 @@ final class Version20200122064958 extends AbstractErgonodeMigration
         );
 
         $this->addSql(
+            'CREATE TABLE exporter.tree(
+                    id uuid NOT NULL,
+                    data jsonb NOT NULL,
+                    PRIMARY KEY (id)
+                 )'
+        );
+
+        $this->addSql(
             'CREATE TABLE exporter.attribute(
                     id uuid NOT NULL,
-                    code varchar(255) NULL DEFAULT NULL::character varying,
                     data jsonb NOT NULL,
                     PRIMARY KEY (id)
                  )'

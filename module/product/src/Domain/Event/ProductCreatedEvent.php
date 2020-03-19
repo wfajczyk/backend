@@ -9,13 +9,12 @@ declare(strict_types = 1);
 
 namespace Ergonode\Product\Domain\Event;
 
-use Ergonode\Category\Domain\ValueObject\CategoryCode;
-
 use Ergonode\EventSourcing\Infrastructure\DomainEventInterface;
 use Ergonode\SharedKernel\Domain\Aggregate\ProductId;
 use Ergonode\Product\Domain\ValueObject\Sku;
 use Ergonode\Value\Domain\ValueObject\ValueInterface;
 use JMS\Serializer\Annotation as JMS;
+use Ergonode\SharedKernel\Domain\Aggregate\CategoryId;
 
 /**
  */
@@ -26,34 +25,34 @@ class ProductCreatedEvent implements DomainEventInterface
      *
      * @JMS\Type("Ergonode\SharedKernel\Domain\Aggregate\ProductId")
      */
-    private $id;
+    private ProductId $id;
 
     /**
      * @var Sku
      *
      * @JMS\Type("Ergonode\Product\Domain\ValueObject\Sku")
      */
-    private $sku;
+    private Sku $sku;
 
     /**
-     * @var CategoryCode[]
+     * @var Categoryid[]
      *
-     * @JMS\Type("array<Ergonode\Category\Domain\ValueObject\CategoryCode>")
+     * @JMS\Type("array<Ergonode\SharedKernel\Domain\Aggregate\CategoryId>")
      */
-    private $categories;
+    private array $categories;
 
     /**
      * @var ValueInterface[]
      *
      * @JMS\Type("array<string,Ergonode\Value\Domain\ValueObject\ValueInterface>")
      */
-    private $attributes;
+    private array $attributes;
 
     /**
-     * @param ProductId $id
-     * @param Sku       $sku
-     * @param array     $categories
-     * @param array     $attributes
+     * @param ProductId    $id
+     * @param Sku          $sku
+     * @param CategoryId[] $categories
+     * @param array        $attributes
      */
     public function __construct(
         ProductId $id,
@@ -84,7 +83,7 @@ class ProductCreatedEvent implements DomainEventInterface
     }
 
     /**
-     * @return CategoryCode[]
+     * @return CategoryId[]
      */
     public function getCategories(): array
     {

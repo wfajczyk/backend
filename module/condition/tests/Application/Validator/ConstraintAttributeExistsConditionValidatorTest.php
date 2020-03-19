@@ -24,29 +24,29 @@ class ConstraintAttributeExistsConditionValidatorTest extends ConstraintValidato
     /**
      * @var MockObject|AttributeQueryInterface
      */
-    private $attributeQuery;
+    private MockObject $attributeQuery;
 
     /**
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attributeQuery = $this->createMock(AttributeQueryInterface::class);
         parent::setUp();
     }
 
     /**
-     * @expectedException \Symfony\Component\Validator\Exception\ValidatorException
      */
     public function testWrongValueProvided(): void
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\ValidatorException::class);
         $this->validator->validate(new \stdClass(), new ConstraintAttributeExistsCondition());
     }
 
     /**
-     * @expectedException \Symfony\Component\Validator\Exception\ValidatorException
      */
     public function testWrongConstraintProvided(): void
     {
+        $this->expectException(\Symfony\Component\Validator\Exception\ValidatorException::class);
         /** @var Constraint $constraint */
         $constraint = $this->createMock(Constraint::class);
         $this->validator->validate([], $constraint);

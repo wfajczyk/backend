@@ -12,10 +12,10 @@ use Ergonode\Attribute\Domain\Entity\Attribute\ImageAttribute;
 use Ergonode\EventSourcing\Infrastructure\Bus\CommandBusInterface;
 use Ergonode\Importer\Domain\Command\Import\ProcessImportCommand;
 use Ergonode\Importer\Domain\Entity\Import;
+use Ergonode\Importer\Domain\ValueObject\Progress;
 use Ergonode\ImporterMagento1\Domain\Entity\Magento1CsvSource;
 use Ergonode\ImporterMagento1\Infrastructure\Model\ProductModel;
 use Ergonode\ImporterMagento1\Infrastructure\Processor\Magento1ProcessorStepInterface;
-use Ergonode\SharedKernel\Domain\Aggregate\MultimediaId;
 use Ergonode\Transformer\Domain\Model\Record;
 use Ergonode\Core\Domain\ValueObject\Language;
 use Ergonode\Transformer\Infrastructure\Action\ProductImportAction;
@@ -25,39 +25,71 @@ use Ergonode\Value\Domain\ValueObject\TranslatableStringValue;
 use Ergonode\Core\Domain\ValueObject\TranslatableString;
 use Ergonode\Attribute\Domain\Entity\Attribute\SelectAttribute;
 use Ergonode\Attribute\Domain\Entity\Attribute\MultiSelectAttribute;
+use Ergonode\Importer\Domain\Repository\ImportLineRepositoryInterface;
+use Ergonode\Importer\Domain\Entity\ImportLine;
+use Doctrine\DBAL\DBALException;
+use Ramsey\Uuid\Uuid;
+use Ergonode\SharedKernel\Domain\Aggregate\MultimediaId;
 
 /**
  */
 class Magento1ProductProcessor implements Magento1ProcessorStepInterface
 {
+    private const NAMESPACE = 'e1f84ee9-14f2-4e52-981a-b6b82006ada8';
+
+    /**
+     * @var ImportLineRepositoryInterface
+     */
+    private ImportLineRepositoryInterface $repository;
+
     /**
      * @var CommandBusInterface
      */
     private CommandBusInterface $commandBus;
 
     /**
-     * @param CommandBusInterface $commandBus
+     * @param ImportLineRepositoryInterface $repository
+     * @param CommandBusInterface           $commandBus
      */
-    public function __construct(CommandBusInterface $commandBus)
+    public function __construct(ImportLineRepositoryInterface $repository, CommandBusInterface $commandBus)
     {
+        $this->repository = $repository;
         $this->commandBus = $commandBus;
     }
 
     /**
      * @param Import            $import
-     * @param ProductModel[]    $products
+     * @param array             $products
      * @param Transformer       $transformer
      * @param Magento1CsvSource $source
+     * @param Progress          $steps
+     *
+     * @throws DBALException
      */
-    public function process(Import $import, array $products, Transformer $transformer, Magento1CsvSource $source): void
-    {
+    public function process(
+        Import $import,
+        array $products,
+        Transformer $transformer,
+        Magento1CsvSource $source,
+        Progress $steps
+    ): void {
         $i = 0;
         $products = $this->getGroupedProducts($products);
+        $count = count($products['simple']);
         /** @var ProductModel $product */
         foreach ($products['simple'] as $product) {
             $record = $this->getRecord($product, $transformer, $source);
             $i++;
-            $command = new ProcessImportCommand($import->getId(), $i, $record, ProductImportAction::TYPE);
+            $records = new Progress($i, $count);
+            $command = new ProcessImportCommand(
+                $import->getId(),
+                $steps,
+                $records,
+                $record,
+                ProductImportAction::TYPE
+            );
+            $line = new ImportLine($import->getId(), $steps->getPosition(), $i);
+            $this->repository->save($line);
             $this->commandBus->dispatch($command);
         }
     }
@@ -103,7 +135,8 @@ class Magento1ProductProcessor implements Magento1ProcessorStepInterface
                         $record->setValue($field, new Stringvalue($value));
                     } elseif (ImageAttribute::TYPE === $type) {
                         if ($source->import(Magento1CsvSource::MULTIMEDIA)) {
-                            $multimediaId = MultimediaId::fromKey($source->getHost().$value);
+                            $uuid  = Uuid::uuid5(self::NAMESPACE, $source->getHost().$value)->toString();
+                            $multimediaId = new MultimediaId($uuid);
                             $record->setValue($field, new Stringvalue($multimediaId->getValue()));
                         }
                     } elseif ($isMultilingual) {
@@ -117,7 +150,7 @@ class Magento1ProductProcessor implements Magento1ProcessorStepInterface
                             }
                         }
                         $record->setValue($field, new TranslatableStringValue(new TranslatableString($translation)));
-                    } else if (null !== $value) {
+                    } elseif (null !== $value) {
                         $record->setValue($field, new StringValue($value));
                     }
                 }

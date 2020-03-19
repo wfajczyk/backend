@@ -8,8 +8,8 @@ declare(strict_types = 1);
 
 namespace Ergonode\Condition\Tests\Infrastructure\Condition\Calculator;
 
-use Ergonode\CategoryTree\Domain\Entity\CategoryTree;
-use Ergonode\CategoryTree\Domain\Repository\TreeRepositoryInterface;
+use Ergonode\Category\Domain\Entity\CategoryTree;
+use Ergonode\Category\Domain\Repository\TreeRepositoryInterface;
 use Ergonode\Condition\Domain\Condition\ProductBelongCategoryTreeCondition;
 use Ergonode\Condition\Infrastructure\Condition\Calculator\ProductBelongCategoryTreeConditionCalculatorStrategy;
 use Ergonode\Product\Domain\Entity\AbstractProduct;
@@ -24,7 +24,7 @@ class ProductBelongCategoryTreeConditionCalculatorStrategyTest extends TestCase
     /**
      * @var MockObject|TreeRepositoryInterface
      */
-    private $repository;
+    private MockObject $repository;
 
     /**
      * @var ProductBelongCategoryTreeConditionCalculatorStrategy
@@ -33,7 +33,7 @@ class ProductBelongCategoryTreeConditionCalculatorStrategyTest extends TestCase
 
     /**
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock(TreeRepositoryInterface::class);
         $this->strategy = new ProductBelongCategoryTreeConditionCalculatorStrategy($this->repository);
