@@ -12,6 +12,7 @@ use Ergonode\ExporterShopware6\Infrastructure\Connector\AbstractAction;
 use Ergonode\ExporterShopware6\Infrastructure\Connector\ActionInterface;
 use Ergonode\ExporterShopware6\Infrastructure\Model\AbstractShopware6CustomFieldSet;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomFieldSet;
+use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomFieldSetConfig;
 use GuzzleHttp\Psr7\Request;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -51,10 +52,15 @@ class PostCustomFieldSetAction extends AbstractAction implements ActionInterface
 
         $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
+        $config = new Shopware6CustomFieldSetConfig(
+            $data['data']['attributes']['config']['translated'],
+            $data['data']['attributes']['config']['label'] ?: null
+        );
+
         return new Shopware6CustomFieldSet(
             $data['data']['id'],
             $data['data']['attributes']['name'],
-            $data['data']['attributes']['config']
+            $config
         );
     }
 

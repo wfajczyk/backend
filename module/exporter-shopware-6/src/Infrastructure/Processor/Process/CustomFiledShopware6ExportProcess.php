@@ -20,6 +20,7 @@ use Ergonode\ExporterShopware6\Infrastructure\Client\Shopware6CustomFieldClient;
 use Ergonode\ExporterShopware6\Infrastructure\Client\Shopware6CustomFieldSetClient;
 use Ergonode\ExporterShopware6\Infrastructure\Exception\Shopware6ExporterException;
 use Ergonode\ExporterShopware6\Infrastructure\Model\AbstractShopware6CustomFieldSet;
+use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomFieldSetConfig;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Shopware6CustomField;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomFieldSet;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Shopware6Language;
@@ -126,13 +127,15 @@ class CustomFiledShopware6ExportProcess
             str_replace('_', '-', $channel->getDefaultLanguage()->getCode()) => self::CUSTOM_FIELD_SET_NAME,
         ];
 
+        $config = new Shopware6CustomFieldSetConfig(
+            true,
+            $label
+        );
+
         $customFieldSet = new Shopware6CustomFieldSet(
             null,
             self::CUSTOM_FIELD_SET_NAME,
-            [
-                'translated' => true,
-                'label' => $label,
-            ],
+            $config,
             [
                 [
                     'entityName' => 'product',

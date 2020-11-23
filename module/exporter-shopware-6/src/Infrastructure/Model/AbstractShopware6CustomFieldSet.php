@@ -24,12 +24,10 @@ abstract class AbstractShopware6CustomFieldSet
     protected ?string $name;
 
     /**
-     * @var ?array
-     *
-     * @JMS\Type("array")
+     * @JMS\Type("Ergonode\ExporterShopware6\Infrastructure\Model\AbstractShopware6CustomFieldSetConfig")
      * @JMS\SerializedName("config")
      */
-    protected ?array $config;
+    protected ?AbstractShopware6CustomFieldSetConfig $config;
 
     /**
      * @var ?array
@@ -46,12 +44,11 @@ abstract class AbstractShopware6CustomFieldSet
 
     /**
      * @param array|null $relations
-     * @param array|null $config
      */
     public function __construct(
         ?string $id = null,
         ?string $name = null,
-        ?array $config = null,
+        ?AbstractShopware6CustomFieldSetConfig $config = null,
         ?array $relations = null
     ) {
         $this->id = $id;
@@ -92,19 +89,6 @@ abstract class AbstractShopware6CustomFieldSet
     public function addRelation(array $relations): void
     {
         $this->relations[] = $relations;
-    }
-
-    public function setLabel(array $label): void
-    {
-        if (isset($this->config['label'])) {
-            if (!empty(array_diff($this->config['label'], $label))) {
-                $this->config['label'] = $label;
-                $this->modified = true;
-            }
-        } else {
-            $this->config['label'] = $label;
-            $this->modified = true;
-        }
     }
 
     public function isModified(): bool
