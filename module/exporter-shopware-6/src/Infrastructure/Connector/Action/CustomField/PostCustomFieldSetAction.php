@@ -10,7 +10,8 @@ namespace Ergonode\ExporterShopware6\Infrastructure\Connector\Action\CustomField
 
 use Ergonode\ExporterShopware6\Infrastructure\Connector\AbstractAction;
 use Ergonode\ExporterShopware6\Infrastructure\Connector\ActionInterface;
-use Ergonode\ExporterShopware6\Infrastructure\Model\Shopware6CustomFieldSet;
+use Ergonode\ExporterShopware6\Infrastructure\Model\AbstractShopware6CustomFieldSet;
+use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomFieldSet;
 use GuzzleHttp\Psr7\Request;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -19,11 +20,11 @@ class PostCustomFieldSetAction extends AbstractAction implements ActionInterface
 {
     private const URI = '/api/v2/custom-field-set?%s';
 
-    private Shopware6CustomFieldSet $customField;
+    private AbstractShopware6CustomFieldSet $customField;
 
     private bool $response;
 
-    public function __construct(Shopware6CustomFieldSet $customField, bool $response = false)
+    public function __construct(AbstractShopware6CustomFieldSet $customField, bool $response = false)
     {
         $this->customField = $customField;
         $this->response = $response;
@@ -42,7 +43,7 @@ class PostCustomFieldSetAction extends AbstractAction implements ActionInterface
     /**
      * @throws \JsonException
      */
-    public function parseContent(?string $content): ?Shopware6CustomFieldSet
+    public function parseContent(?string $content): ?AbstractShopware6CustomFieldSet
     {
         if (null === $content) {
             return null;
@@ -52,7 +53,8 @@ class PostCustomFieldSetAction extends AbstractAction implements ActionInterface
 
         return new Shopware6CustomFieldSet(
             $data['data']['id'],
-            $data['data']['attributes']['name']
+            $data['data']['attributes']['name'],
+            $data['data']['attributes']['config']
         );
     }
 

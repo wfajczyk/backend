@@ -18,8 +18,9 @@ use Ergonode\ExporterShopware6\Infrastructure\Builder\Shopware6CustomFieldBuilde
 use Ergonode\ExporterShopware6\Infrastructure\Client\Shopware6CustomFieldClient;
 use Ergonode\ExporterShopware6\Infrastructure\Client\Shopware6CustomFieldSetClient;
 use Ergonode\ExporterShopware6\Infrastructure\Exception\Shopware6ExporterException;
+use Ergonode\ExporterShopware6\Infrastructure\Model\AbstractShopware6CustomFieldSet;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Shopware6CustomField;
-use Ergonode\ExporterShopware6\Infrastructure\Model\Shopware6CustomFieldSet;
+use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomFieldSet;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Shopware6Language;
 use Ergonode\SharedKernel\Domain\Aggregate\ExportId;
 use GuzzleHttp\Exception\ClientException;
@@ -27,6 +28,8 @@ use Webmozart\Assert\Assert;
 
 class CustomFiledShopware6ExportProcess
 {
+    private const CUSTOM_FIELD_SET_NAME = 'ergonode';
+
     private Shopware6CustomFieldRepositoryInterface $customFieldRepository;
 
     private Shopware6CustomFieldClient $customFieldClient;
@@ -113,15 +116,22 @@ class CustomFiledShopware6ExportProcess
     private function loadCustomFieldSet(
         Shopware6Channel $channel,
         AbstractAttribute $attribute
-    ): Shopware6CustomFieldSet {
-        $customFieldSet = $this->customFieldSetClient->findByCode($channel, 'ergonode');
+    ): AbstractShopware6CustomFieldSet {
+        $customFieldSet = $this->customFieldSetClient->findByCode($channel, self::CUSTOM_FIELD_SET_NAME);
         if ($customFieldSet) {
             return $customFieldSet;
         }
+        $label = [
+            str_replace('_', '-', $channel->getDefaultLanguage()->getCode()) => self::CUSTOM_FIELD_SET_NAME,
+        ];
 
         $customFieldSet = new Shopware6CustomFieldSet(
             null,
-            'ergonode',
+            self::CUSTOM_FIELD_SET_NAME,
+            [
+                'translated' => true,
+                'label' => $label,
+            ],
             [
                 [
                     'entityName' => 'product',
