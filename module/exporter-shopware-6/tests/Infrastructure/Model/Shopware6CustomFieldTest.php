@@ -10,7 +10,6 @@ namespace Ergonode\ExporterShopware6\Tests\Infrastructure\Model;
 
 use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomField;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomFieldConfig;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class Shopware6CustomFieldTest extends TestCase

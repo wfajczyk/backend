@@ -17,6 +17,7 @@ use Ergonode\ExporterShopware6\Infrastructure\Connector\Action\CustomField\Patch
 use Ergonode\ExporterShopware6\Infrastructure\Connector\Action\CustomField\PostCustomFieldAction;
 use Ergonode\ExporterShopware6\Infrastructure\Connector\Shopware6Connector;
 use Ergonode\ExporterShopware6\Infrastructure\Connector\Shopware6QueryBuilder;
+use Ergonode\ExporterShopware6\Infrastructure\Exception\Shopware6InstanceOfException;
 use Ergonode\ExporterShopware6\Infrastructure\Model\AbstractShopware6CustomField;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Shopware6Language;
 
@@ -80,6 +81,9 @@ class Shopware6CustomFieldClient
         return $this->connector->execute($channel, $action);
     }
 
+    /**
+     * @throws Shopware6InstanceOfException
+     */
     public function insert(
         Shopware6Channel $channel,
         AbstractShopware6CustomField $customField,
@@ -90,13 +94,7 @@ class Shopware6CustomFieldClient
         $shopwareCustomField = $this->connector->execute($channel, $action);
 
         if (!$shopwareCustomField instanceof AbstractShopware6CustomField) {
-            throw new \LogicException(
-                sprintf(
-                    'Expected an instance of %s. %s received.',
-                    AbstractShopware6CustomField::class,
-                    get_debug_type($shopwareCustomField)
-                )
-            );
+            throw new Shopware6InstanceOfException(AbstractShopware6CustomField::class);
         }
         $this->repository->save(
             $channel->getId(),
