@@ -66,15 +66,6 @@ class Shopware6Connector
 
             return $action->parseContent($contents);
         } catch (GuzzleException $exception) {
-            dump($exception->getTraceAsString());
-            dump($exception->getMessage());
-//            dump($exception->getPrevious()->getMessage());
-
-            dump($action->getRequest()->getMethod());
-            dump($action->getRequest()->getUri());
-            dump($action->getRequest()->getBody()->getContents());
-            dump($action->getRequest()->getHeaders());
-
             //todo log
             throw  $exception;
         } catch (\Exception $exception) {

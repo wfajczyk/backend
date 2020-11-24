@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Ergonode\ExporterShopware6\Infrastructure\Model\Basic;
 
-class Shopware6CustomField
+use Ergonode\ExporterShopware6\Infrastructure\Model\AbstractShopware6CustomField;
+
+class Shopware6CustomField extends AbstractShopware6CustomField
 {
 }

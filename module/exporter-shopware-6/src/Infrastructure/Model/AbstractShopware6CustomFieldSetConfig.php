@@ -10,7 +10,7 @@ namespace Ergonode\ExporterShopware6\Infrastructure\Model;
 
 use JMS\Serializer\Annotation as JMS;
 
-class AbstractShopware6CustomFieldSetConfig
+abstract class AbstractShopware6CustomFieldSetConfig
 {
     /**
      * @JMS\Type("bool")

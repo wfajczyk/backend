@@ -21,7 +21,7 @@ use Ergonode\ExporterShopware6\Infrastructure\Client\Shopware6CustomFieldSetClie
 use Ergonode\ExporterShopware6\Infrastructure\Exception\Shopware6ExporterException;
 use Ergonode\ExporterShopware6\Infrastructure\Model\AbstractShopware6CustomFieldSet;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomFieldSetConfig;
-use Ergonode\ExporterShopware6\Infrastructure\Model\Shopware6CustomField;
+use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomField;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Basic\Shopware6CustomFieldSet;
 use Ergonode\ExporterShopware6\Infrastructure\Model\Shopware6Language;
 use GuzzleHttp\Exception\ClientException;
