@@ -34,6 +34,7 @@ class ErgonodeAccountExtension extends Extension implements PrependExtensionInte
         $configuration = $this->processConfiguration(new Configuration(), $configs);
 
         $container->setParameter('ergonode_account.hosts', $configuration['hosts']);
+        $container->setParameter('ergonode_account.privilege', $configuration['privilege']);
     }
 
     /**
@@ -43,6 +44,7 @@ class ErgonodeAccountExtension extends Extension implements PrependExtensionInte
     {
         $this->prependNelmioApiDoc($container);
         $this->prependFlysystem($container);
+        $this->prependErgonodeAccount($container);
     }
 
     private function prependNelmioApiDoc(ContainerBuilder $container): void
@@ -60,5 +62,12 @@ class ErgonodeAccountExtension extends Extension implements PrependExtensionInte
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../Resources/config'));
 
         $loader->load('flysystem.yaml');
+    }
+
+    private function prependErgonodeAccount(ContainerBuilder $container): void
+    {
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../Resources/config'));
+
+        $loader->load('ergonode_account.yaml');
     }
 }

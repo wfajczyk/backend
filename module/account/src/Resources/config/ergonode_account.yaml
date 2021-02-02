@@ -1,0 +1,71 @@
+ergonode_account:
+    privilege:
+        USER_READ:
+            privileges:
+                - ACCOUNT_GET_GRID
+                - ACCOUNT_GET
+
+                - CORE_GET_LANGUAGE_GRID
+                - CORE_GET_LANGUAGE_TREE
+        USER_UPDATE:
+            privileges:
+                - ACCOUNT_GET_GRID
+                - ACCOUNT_GET
+                - ACCOUNT_DELETE_AVATAR
+                - ACCOUNT_PUT
+                - ACCOUNT_PUT_PASSWORD
+                - ACCOUNT_POST_AVATAR
+                - ACCOUNT_GET_ROLE_GRID
+
+                - CORE_GET_LANGUAGE_GRID
+                - CORE_GET_LANGUAGE_TREE
+        USER_CREATE:
+            privileges:
+                - ACCOUNT_GET_GRID
+                - ACCOUNT_GET
+                - ACCOUNT_DELETE_AVATAR
+                - ACCOUNT_POST
+                - ACCOUNT_PUT
+                - ACCOUNT_PUT_PASSWORD
+                - ACCOUNT_POST_AVATAR
+                - ACCOUNT_GET_ROLE_GRID
+
+                - CORE_GET_LANGUAGE_GRID
+                - CORE_GET_LANGUAGE_TREE
+
+        USER_ROLE_READ:
+            privileges:
+                - ACCOUNT_GET_ROLE
+                - ACCOUNT_GET_ROLE_GRID
+
+                - CORE_GET_LANGUAGE_GRID
+                - CORE_GET_LANGUAGE_TREE
+
+        USER_ROLE_UPDATE:
+            privileges:
+                - ACCOUNT_POST_ROLE
+                - ACCOUNT_PUT_ROLE
+                - ACCOUNT_GET_ROLE
+                - ACCOUNT_GET_ROLE_GRID
+
+                - CORE_GET_LANGUAGE_GRID
+                - CORE_GET_LANGUAGE_TREE
+
+        USER_ROLE_CREATE:
+            privileges:
+                - ACCOUNT_POST_ROLE
+                - ACCOUNT_PUT_ROLE
+                - ACCOUNT_GET_ROLE
+                - ACCOUNT_GET_ROLE_GRID
+
+                - CORE_GET_LANGUAGE_GRID
+                - CORE_GET_LANGUAGE_TREE
+
+        USER_ROLE_DELETE:
+            privileges:
+                - ACCOUNT_DELETE_ROLE
+                - ACCOUNT_GET_ROLE
+                - ACCOUNT_GET_ROLE_GRID
+
+                - CORE_GET_LANGUAGE_GRID
+                - CORE_GET_LANGUAGE_TREE

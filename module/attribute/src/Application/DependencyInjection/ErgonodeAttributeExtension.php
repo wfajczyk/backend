@@ -69,5 +69,7 @@ class ErgonodeAttributeExtension extends Extension implements PrependExtensionIn
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../Resources/config'));
 
         $loader->load('nelmio_api_doc.yaml');
+
+        $loader->load('ergonode_account.yaml');
     }
 }

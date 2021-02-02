@@ -46,6 +46,10 @@ services:
         arguments:
             $hosts: '%ergonode_account.hosts%'
 
+    Ergonode\Account\Application\Command\GeneratePrivilegeCommand:
+        arguments:
+            $privilege: '%ergonode_account.privilege%'
+
     Ergonode\Account\Domain\Repository\UserRepositoryInterface: '@Ergonode\Account\Infrastructure\Persistence\Repository\DbalUserRepository'
     Ergonode\Account\Domain\Repository\RoleRepositoryInterface: '@Ergonode\Account\Infrastructure\Persistence\Repository\DbalRoleRepository'
     Ergonode\Account\Domain\Query\AccountQueryInterface: '@Ergonode\Account\Infrastructure\Persistence\Query\DbalAccountQuery'

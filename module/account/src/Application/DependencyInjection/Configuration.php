@@ -25,6 +25,15 @@ final class Configuration implements ConfigurationInterface
                     ->variableNode('hosts')
                         ->isRequired()
                     ->end()
+                    ->arrayNode('privilege')
+                        ->arrayPrototype()
+                            ->children()
+                                ->arrayNode('privileges')
+                                    ->scalarPrototype()->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
                 ->end()
             ->end();
 

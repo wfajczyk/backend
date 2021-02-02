@@ -1,0 +1,5 @@
+ergonode_account:
+    privilege:
+        USER_READ:
+            privileges:
+                - TEST
